@@ -174,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.location.protocol === "file:") {
     showFileProtocolWarning();
   }
+  startDatabasePolling();
 });
 
 function applyTranslations() {
@@ -1305,4 +1306,19 @@ function showFileProtocolWarning() {
   `;
   document.body.appendChild(banner);
   document.body.style.paddingTop = "40px";
+}
+
+function startDatabasePolling() {
+  setInterval(() => {
+    // Only poll if the owner is logged in and the dashboard is visible
+    if (document.getElementById("screen-owner-dashboard").classList.contains("hidden") === false) {
+      if (STATE.activeDashboardTab === 'tab-kpi') loadKPIData();
+      else if (STATE.activeDashboardTab === 'tab-menu') renderMenuTable();
+      else if (STATE.activeDashboardTab === 'tab-raw') renderRawMaterialsGrid();
+      else if (STATE.activeDashboardTab === 'tab-suppliers') renderSuppliersTable();
+      else if (STATE.activeDashboardTab === 'tab-staff') renderStaffTable();
+      else if (STATE.activeDashboardTab === 'tab-history') renderSalesHistoryTable();
+      else if (STATE.activeDashboardTab === 'tab-reports') generateReport();
+    }
+  }, 4000); // Poll every 4 seconds
 }

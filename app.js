@@ -123,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.location.protocol === "file:") {
     showFileProtocolWarning();
   }
+  startDatabasePolling();
 });
 
 function applyTranslations() {
@@ -820,4 +821,16 @@ function showFileProtocolWarning() {
   `;
   document.body.appendChild(banner);
   document.body.style.paddingTop = "40px";
+}
+
+function startDatabasePolling() {
+  setInterval(() => {
+    // Only poll if the staff select or POS screen is active
+    if (document.getElementById("screen-staff-select").classList.contains("hidden") === false) {
+      loadStaffSelectionList();
+    }
+    if (document.getElementById("screen-staff-pos").classList.contains("hidden") === false) {
+      renderFoodGrid();
+    }
+  }, 8000); // Poll every 8 seconds
 }
