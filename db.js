@@ -62,17 +62,24 @@ const DEFAULT_STAFF = [
 ];
 
 const IS_SERVER = window.location.protocol.startsWith("http");
+const IS_LOCAL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname.startsWith("192.168.") || window.location.hostname.startsWith("10.");
+
+const CLOUD_DB_BASE = "https://kvdb.io/Kz2Z9U2zWJ4bX9vH2qZaWb/"; // Unique cloud bucket for Manoj Vaishnav Hotel POS
 
 // Initialize LocalStorage if empty
 function initializeDatabase() {
   let isInitialized = false;
   if (IS_SERVER) {
     try {
+      const url = IS_LOCAL ? "/api/db?key=initialized_v7" : `${CLOUD_DB_BASE}mv_pos_initialized_v7`;
       const xhr = new XMLHttpRequest();
-      xhr.open("GET", "/api/db?key=initialized_v7", false);
+      xhr.open("GET", url, false);
       xhr.send();
       if (xhr.status === 200 && xhr.responseText !== "null" && xhr.responseText !== "") {
-        isInitialized = true;
+        const parsed = JSON.parse(xhr.responseText);
+        if (parsed === "true" || parsed === true) {
+          isInitialized = true;
+        }
       }
     } catch (e) {
       console.error("Failed to check server initialization:", e);
@@ -95,12 +102,15 @@ function initializeDatabase() {
     localStorage.setItem("mv_pos_lang", "hi"); // default to Hindi
 
     if (IS_SERVER) {
-      // Sync all defaults to the server synchronously
+      // Sync all defaults to the server/cloud database synchronously
       try {
         const syncKey = (key, val) => {
+          const url = IS_LOCAL ? `/api/db?key=${key}` : `${CLOUD_DB_BASE}mv_pos_${key}`;
           const xhr = new XMLHttpRequest();
-          xhr.open("POST", `/api/db?key=${key}`, false);
-          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.open("POST", url, false);
+          if (IS_LOCAL) {
+            xhr.setRequestHeader("Content-Type", "application/json");
+          }
           xhr.send(JSON.stringify(val));
         };
         syncKey("initialized_v7", "true");
@@ -126,8 +136,9 @@ window.DB = {
   get: (key) => {
     if (IS_SERVER) {
       try {
+        const url = IS_LOCAL ? `/api/db?key=${key}` : `${CLOUD_DB_BASE}mv_pos_${key}`;
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", `/api/db?key=${key}`, false);
+        xhr.open("GET", url, false);
         xhr.send();
         if (xhr.status === 200) {
           const resp = xhr.responseText;
@@ -145,9 +156,12 @@ window.DB = {
     localStorage.setItem("mv_pos_" + key, JSON.stringify(val));
     if (IS_SERVER) {
       try {
+        const url = IS_LOCAL ? `/api/db?key=${key}` : `${CLOUD_DB_BASE}mv_pos_${key}`;
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", `/api/db?key=${key}`, false);
-        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.open("POST", url, false);
+        if (IS_LOCAL) {
+          xhr.setRequestHeader("Content-Type", "application/json");
+        }
         xhr.send(JSON.stringify(val));
       } catch (e) {
         console.error(`Server DB write failed for key ${key}:`, e);
@@ -157,9 +171,16 @@ window.DB = {
   reset: () => {
     if (IS_SERVER) {
       try {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/api/db/reset", false);
-        xhr.send();
+        if (IS_LOCAL) {
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "/api/db/reset", false);
+          xhr.send();
+        } else {
+          // Clear initialization on the cloud database
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", `${CLOUD_DB_BASE}mv_pos_initialized_v7`, false);
+          xhr.send(JSON.stringify(false));
+        }
       } catch (e) {
         console.error("Server DB reset failed:", e);
       }
