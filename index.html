@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manoj Vaishnav Hotel & Mishthan Bhandar - Staff POS Terminal</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="index.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body class="light-mode">
+  
+  <div id="app">
+    <!-- Top Header -->
+    <header class="global-header">
+      <div class="header-logo">
+        <div class="logo-circle">🔥</div>
+        <div class="logo-text">
+          <h1 id="header-title-hi">मनोज वैष्णव होटल एवं मिष्ठान भंडार</h1>
+          <h2 id="header-title-en">Manoj Vaishnav Hotel & Mishthan Bhandar (POS Terminal)</h2>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="lang-toggle-btn" class="action-btn lang-btn" onclick="toggleLanguage()">
+          <span class="flag-icon">🇬🇧</span> <span class="lang-text">English</span>
+        </button>
+        <button id="logout-btn" class="action-btn logout-btn hidden" onclick="logout()">
+          <span id="logout-text" data-translate="logout_btn_text">लॉगआउट / Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Screens -->
+    <main class="main-viewport">
+      
+      <!-- SCREEN 1: Staff Selection -->
+      <section id="screen-staff-select" class="screen-section active">
+        <div class="login-wrapper" style="max-width: 900px; width: 95%;">
+          <div class="welcome-banner">
+            <h2 data-translate="select_staff_title">प्रवेश द्वार (Portal Entrance)</h2>
+            <p data-translate="select_staff_subtitle">मनोज वैष्णव होटल (Manoj Vaishnav Hotel)</p>
+          </div>
+          
+          <div class="login-split-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 30px; text-align: left;">
+            <!-- Staff Login Column -->
+            <div class="login-box-card" style="background: rgba(255, 255, 255, 0.45); border: 1px solid rgba(0,0,0,0.06); padding: 25px; border-radius: var(--border-radius-md); box-shadow: var(--shadow-sm);">
+              <h3 style="margin-bottom: 20px; font-weight: 700; border-bottom: 2px solid var(--gold-light); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--text-dark);">
+                <span>🧑‍🍳</span> <span data-translate="staff_login_header">कर्मचारी लॉगिन (Staff Login)</span>
+              </h3>
+              <div id="staff-buttons-grid" class="staff-grid">
+                <!-- Dynamic staff buttons generated from JS -->
+              </div>
+            </div>
+            
+            <!-- Owner Login Column -->
+            <div class="login-box-card" style="background: rgba(255, 255, 255, 0.45); border: 1px solid rgba(0,0,0,0.06); padding: 25px; border-radius: var(--border-radius-md); box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
+              <h3 style="margin-bottom: 20px; font-weight: 700; border-bottom: 2px solid var(--gold-light); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--text-dark);">
+                <span>👑</span> <span data-translate="owner_login_header">मालिक लॉगिन (Owner Login)</span>
+              </h3>
+              <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1; min-height: 120px;">
+                <div class="staff-select-card owner-select-card" onclick="window.location.href='owner.html'" style="border: 2px solid var(--gold-primary); background-color: var(--gold-light); width: 100%; border-radius: var(--border-radius-sm); text-align: center; padding: 20px 10px; cursor: pointer; transition: var(--transition-fast); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div class="staff-card-avatar" style="background-color: var(--gold-primary); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 12px; box-shadow: var(--shadow-sm);">👑</div>
+                  <div class="staff-card-name" data-translate="owner_entry_btn" style="color: var(--gold-hover); font-weight: 700; font-size: 1.1rem;">मालिक प्रवेश (Owner)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 2: Staff PIN Entry -->
+      <section id="screen-staff-pin" class="screen-section hidden">
+        <div class="login-wrapper pin-wrapper">
+          <div class="back-btn-container">
+            <button class="back-link-btn" onclick="showScreen('screen-staff-select')">⬅ <span data-translate="back_btn">वापस</span></button>
+          </div>
+          <div class="welcome-banner">
+            <h2 id="pin-screen-staff-name">कर्मचारी</h2>
+            <p data-translate="enter_pin_msg">4 अंकों का पिन दर्ज करें (Enter 4-Digit PIN)</p>
+          </div>
+          <div class="pin-display">
+            <span class="pin-dot"></span>
+            <span class="pin-dot"></span>
+            <span class="pin-dot"></span>
+            <span class="pin-dot"></span>
+          </div>
+          <input type="password" id="staff-pin-input" maxlength="4" style="position:absolute; opacity:0; z-index:-1;" autocomplete="off">
+          <div class="keypad">
+            <button class="key-btn" onclick="pressKey(1)">1</button>
+            <button class="key-btn" onclick="pressKey(2)">2</button>
+            <button class="key-btn" onclick="pressKey(3)">3</button>
+            <button class="key-btn" onclick="pressKey(4)">4</button>
+            <button class="key-btn" onclick="pressKey(5)">5</button>
+            <button class="key-btn" onclick="pressKey(6)">6</button>
+            <button class="key-btn" onclick="pressKey(7)">7</button>
+            <button class="key-btn" onclick="pressKey(8)">8</button>
+            <button class="key-btn" onclick="pressKey(9)">9</button>
+            <button class="key-btn clear-btn" onclick="pressKey('C')">C</button>
+            <button class="key-btn" onclick="pressKey(0)">0</button>
+            <button class="key-btn ok-btn" onclick="verifyStaffPIN()">OK</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 3: Staff POS Terminal -->
+      <section id="screen-staff-pos" class="screen-section hidden">
+        <div class="pos-layout">
+          
+          <!-- Left side: Food Grid -->
+          <div class="pos-items-container">
+            <div class="pos-filters-bar">
+              <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="food-search-input" placeholder="खाना खोजें... / Search food..." oninput="filterFoodItems()">
+              </div>
+              <div id="category-tabs" class="category-tabs">
+                <button class="tab-btn active" onclick="filterCategory('all')" data-category="all" data-translate="cat_all">सभी (All)</button>
+                <button class="tab-btn" onclick="filterCategory('meals')" data-category="meals" data-translate="cat_meals">भोजन (Meals)</button>
+                <button class="tab-btn" onclick="filterCategory('snacks')" data-category="snacks" data-translate="cat_snacks">नाश्ता (Snacks)</button>
+                <button class="tab-btn" onclick="filterCategory('sweets')" data-category="sweets" data-translate="cat_sweets">मिठाई (Sweets)</button>
+                <button class="tab-btn" onclick="filterCategory('fastfood')" data-category="fastfood" data-translate="cat_fastfood">फास्ट फूड</button>
+              </div>
+            </div>
+            
+            <div id="food-items-grid" class="food-grid">
+              <!-- Dynamic items -->
+            </div>
+          </div>
+          
+          <!-- Right side: Cart -->
+          <div class="pos-cart-container">
+            <div class="cart-header">
+              <div class="active-staff-badge">
+                <span class="user-badge-icon">🧑‍🍳</span>
+                <span id="active-staff-name">Ramesh</span>
+              </div>
+              <button class="clear-cart-btn" onclick="clearCart()" data-translate="clear_cart_btn">सब हटाएं</button>
+            </div>
+            
+            <div id="cart-items-list" class="cart-list">
+              <div class="empty-cart-message">
+                <p data-translate="empty_cart">कोई सामान नहीं चुना गया है।</p>
+                <span>🛒</span>
+              </div>
+            </div>
+            
+            <div class="cart-summary-panel">
+              <div class="summary-row">
+                <span data-translate="original_total">मूल मूल्य:</span>
+                <span id="cart-original-total">₹0.00</span>
+              </div>
+              <div class="summary-row discount-row hidden" id="cart-discount-row">
+                <span data-translate="discount_total">छूट:</span>
+                <span id="cart-discount-total" class="green-text">-₹0.00</span>
+              </div>
+              <div class="summary-row extra-row hidden" id="cart-extra-row">
+                <span data-translate="extra_total">अतिरिक्त:</span>
+                <span id="cart-extra-total" class="gold-text">+₹0.00</span>
+              </div>
+              <div class="summary-row net-total-row">
+                <span data-translate="bill_total">कुल बिल:</span>
+                <span id="cart-net-total">₹0.00</span>
+              </div>
+              
+              <div class="cart-actions-grid">
+                <button class="action-btn custom-price-btn" onclick="openGlobalCustomPriceModal()" data-translate="custom_price_btn">₹ कस्टम रेट</button>
+                <button class="primary-btn pay-btn" onclick="openPaymentModal()" data-translate="pay_btn">भुगतान करें (Pay) ➔</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Checkout Modal -->
+    <div id="payment-modal" class="modal-backdrop hidden">
+      <div class="modal-card payment-modal-card">
+        <div class="modal-header">
+          <h3 data-translate="pay_modal_title">भुगतान विकल्प / Payment Options</h3>
+          <button class="modal-close-btn" onclick="closePaymentModal()">✖</button>
+        </div>
+        <div class="modal-body">
+          <div class="payment-modal-grid">
+            <div class="payment-details-side">
+              <div class="bill-summary-card">
+                <div class="summary-line font-lg">
+                  <span data-translate="net_amount">देय कुल राशि:</span>
+                  <span id="pay-modal-total" class="bold-text">₹0.00</span>
+                </div>
+                <div class="summary-line">
+                  <span data-translate="orig_total_bill">मूल बिल:</span>
+                  <span id="pay-modal-original">₹0.00</span>
+                </div>
+                <div class="summary-line discount-color">
+                  <span data-translate="discount_given">छूट:</span>
+                  <span id="pay-modal-discount">-₹0.00</span>
+                </div>
+                <div class="summary-line extra-color">
+                  <span data-translate="extra_received">अतिरिक्त प्राप्त:</span>
+                  <span id="pay-modal-extra">+₹0.00</span>
+                </div>
+              </div>
+              
+              <div class="pay-mode-selector">
+                <h4 data-translate="select_pay_mode">भुगतान का प्रकार चुनें</h4>
+                <div class="pay-modes-row">
+                  <button class="pay-mode-btn active" onclick="selectPaymentMode('Cash')" id="pm-cash">
+                    <span class="pay-icon-btn">💵</span>
+                    <span class="pay-label-btn" data-translate="pm_cash">नकद (Cash)</span>
+                  </button>
+                  <button class="pay-mode-btn" onclick="selectPaymentMode('UPI')" id="pm-upi">
+                    <span class="pay-icon-btn">⚡</span>
+                    <span class="pay-label-btn" data-translate="pm_upi">UPI (ऑनलाइन)</span>
+                  </button>
+                  <button class="pay-mode-btn" onclick="selectPaymentMode('Card')" id="pm-card">
+                    <span class="pay-icon-btn">💳</span>
+                    <span class="pay-label-btn" data-translate="pm_card">कार्ड (Card)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="balance-calc-card">
+                <div class="summary-line font-md">
+                  <span data-translate="return_change">वापस दें (Return Change):</span>
+                  <span id="pay-calc-return" class="green-text bold-text">₹0.00</span>
+                </div>
+                <div class="summary-line font-md">
+                  <span data-translate="remaining_due">बकाया उधार (Remaining Due):</span>
+                  <span id="pay-calc-due" class="red-text bold-text">₹0.00</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="payment-keypad-side">
+              <h4 data-translate="enter_customer_paid">ग्राहक द्वारा दी गई राशि</h4>
+              <div class="paid-amount-input-box">
+                <span class="currency-symbol">₹</span>
+                <input type="number" id="customer-paid-input" placeholder="0" oninput="calculateBalance()" class="paid-input">
+              </div>
+
+              <div class="quick-cash-row">
+                <button class="quick-cash-btn" onclick="quickPaidAmount('exact')">Exact</button>
+                <button class="quick-cash-btn" onclick="quickPaidAmount(10)">+10</button>
+                <button class="quick-cash-btn" onclick="quickPaidAmount(50)">+50</button>
+                <button class="quick-cash-btn" onclick="quickPaidAmount(100)">+100</button>
+                <button class="quick-cash-btn" onclick="quickPaidAmount(500)">+500</button>
+              </div>
+
+              <div class="virtual-keypad">
+                <button class="vk-btn" onclick="pressPaidKey(1)">1</button>
+                <button class="vk-btn" onclick="pressPaidKey(2)">2</button>
+                <button class="vk-btn" onclick="pressPaidKey(3)">3</button>
+                <button class="vk-btn" onclick="pressPaidKey(4)">4</button>
+                <button class="vk-btn" onclick="pressPaidKey(5)">5</button>
+                <button class="vk-btn" onclick="pressPaidKey(6)">6</button>
+                <button class="vk-btn" onclick="pressPaidKey(7)">7</button>
+                <button class="vk-btn" onclick="pressPaidKey(8)">8</button>
+                <button class="vk-btn" onclick="pressPaidKey(9)">9</button>
+                <button class="vk-btn vk-clear" onclick="pressPaidKey('C')">C</button>
+                <button class="vk-btn" onclick="pressPaidKey(0)">0</button>
+                <button class="vk-btn vk-dot" onclick="pressPaidKey('.')">.</button>
+              </div>
+
+              <button class="primary-btn confirm-checkout-btn" onclick="confirmPaymentCheckout()" data-translate="btn_complete_order">ऑर्डर पूरा करें (Complete Order) ✓</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Price Modal -->
+    <div id="custom-price-modal" class="modal-backdrop hidden">
+      <div class="modal-card custom-price-modal-card">
+        <div class="modal-header">
+          <h3 data-translate="cp_modal_title">कस्टम रेट सेट करें (Custom Price)</h3>
+          <button class="modal-close-btn" onclick="closeCustomPriceModal()">✖</button>
+        </div>
+        <div class="modal-body">
+          <div class="custom-price-fields">
+            <div class="info-row">
+              <span data-translate="cp_orig_price">मूल मूल्य (Original Price):</span>
+              <span id="cp-original-price" class="bold-text">₹0.00</span>
+            </div>
+            
+            <div class="form-group-settings">
+              <label for="cp-new-price-input" data-translate="cp_new_price">ग्राहक द्वारा दी जाने वाली राशि (Final Price):</label>
+              <input type="number" id="cp-new-price-input" placeholder="नया रेट दर्ज करें" class="custom-input font-lg" oninput="calculateCustomPriceDiff()">
+            </div>
+
+            <div class="info-row status-row highlight-green hidden" id="cp-discount-display">
+              <span data-translate="cp_discount_amount">छूट राशि (Discount Amount):</span>
+              <span id="cp-discount-val">₹0.00</span>
+            </div>
+
+            <div class="info-row status-row highlight-gold hidden" id="cp-extra-display">
+              <span data-translate="cp_extra_amount">अतिरिक्त राशि (Extra Amount):</span>
+              <span id="cp-extra-val">₹0.00</span>
+            </div>
+            
+            <div class="form-group-settings">
+              <label for="cp-reason-select" data-translate="cp_reason">कारण चुनें / Select Reason (Optional):</label>
+              <select id="cp-reason-select" class="custom-input">
+                <option value="Regular Customer" data-translate="re_regular">नियमित ग्राहक (Regular Customer)</option>
+                <option value="Friend" data-translate="re_friend">दोस्त / रिश्तेदार (Friend / Family)</option>
+                <option value="Staff Discount" data-translate="re_staff">स्टाफ छूट (Staff Discount)</option>
+                <option value="Owner Approved" data-translate="re_owner">मालिक की अनुमति (Owner Approved)</option>
+                <option value="Festival Offer" data-translate="re_festival">त्योहार ऑफर (Festival Offer)</option>
+                <option value="Manual Discount" data-translate="re_manual">मैन्युअल छूट (Manual Adjustment)</option>
+              </select>
+            </div>
+            
+            <button class="primary-btn save-custom-price-btn" onclick="saveCustomPrice()" data-translate="apply_btn">लागू करें (Apply)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receipt-modal" class="modal-backdrop hidden">
+      <div class="modal-card receipt-modal-card">
+        <div class="modal-header">
+          <h3 data-translate="receipt_title">बिल रसीद (Bill Receipt)</h3>
+          <button class="modal-close-btn" onclick="closeReceiptModal()">✖</button>
+        </div>
+        <div class="modal-body printable-receipt-body" id="printable-receipt">
+          <!-- Receipt Body -->
+        </div>
+        <div class="modal-footer receipt-footer">
+          <button class="primary-btn print-receipt-btn" onclick="printReceiptContent()">🖨️ रसीद प्रिंट करें (Print)</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

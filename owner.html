@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manoj Vaishnav Hotel & Mishthan Bhandar - Owner Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="index.css">
+  
+  <!-- CDNs for visual charts and data export -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="light-mode">
+  
+  <div id="app">
+    <!-- Top Header -->
+    <header class="global-header">
+      <div class="header-logo">
+        <div class="logo-circle">👑</div>
+        <div class="logo-text">
+          <h1 id="header-title-hi">मनोज वैष्णव होटल एवं मिष्ठान भंडार</h1>
+          <h2 id="header-title-en">Manoj Vaishnav Hotel & Mishthan Bhandar (Owner Control)</h2>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="lang-toggle-btn" class="action-btn lang-btn" onclick="toggleLanguage()">
+          <span class="flag-icon">🇬🇧</span> <span class="lang-text">English</span>
+        </button>
+        <button id="logout-btn" class="action-btn logout-btn hidden" onclick="logout()">
+          <span id="logout-text">लॉगआउट / Logout</span> 🚪
+        </button>
+      </div>
+    </header>
+
+    <!-- Screens -->
+    <main class="main-viewport">
+      
+      <!-- SCREEN 1: Owner Password Login -->
+      <section id="screen-owner-login" class="screen-section active">
+        <div class="login-wrapper">
+          <div class="welcome-banner">
+            <h2 data-translate="owner_login_title">मालिक लॉगिन (Owner Login)</h2>
+            <p data-translate="owner_login_subtitle">आगे बढ़ने के लिए पासवर्ड डालें</p>
+          </div>
+          <div class="form-group password-group">
+            <input type="password" id="owner-pass-input" placeholder="पासवर्ड यहाँ लिखें / Enter Password" class="custom-input">
+            <button class="primary-btn login-submit-btn" onclick="verifyOwnerPassword()" data-translate="login_btn">प्रवेश करें</button>
+          </div>
+          <p id="owner-login-error" class="error-text hidden" data-translate="wrong_password">गलत पासवर्ड! कृपया पुनः प्रयास करें।</p>
+        </div>
+      </section>
+
+      <!-- SCREEN 2: Owner Dashboard Screen -->
+      <section id="screen-owner-dashboard" class="screen-section hidden">
+        <div class="dashboard-layout">
+          
+          <!-- Sidebar Navigation -->
+          <aside class="dashboard-sidebar">
+            <div class="sidebar-user-badge">
+              <span class="badge-icon">👑</span>
+              <span data-translate="owner_badge">मालिक डैशबोर्ड</span>
+            </div>
+            <nav class="sidebar-nav">
+              <a href="#" class="nav-item active" onclick="switchDashboardTab('tab-kpi')" data-tab="tab-kpi">
+                <span>📊</span> <span data-translate="nav_kpi">डैशबोर्ड (Summary)</span>
+              </a>
+              <a href="#" class="nav-item" onclick="switchDashboardTab('tab-menu')" data-tab="tab-menu">
+                <span>📋</span> <span data-translate="nav_menu">मेनू कार्ड</span>
+              </a>
+              <a href="#" class="nav-item" onclick="switchDashboardTab('tab-raw')" data-tab="tab-raw">
+                <span>🥔</span> <span data-translate="nav_raw">कच्चा माल (Stock)</span>
+              </a>
+              <a href="#" class="nav-item" onclick="switchDashboardTab('tab-suppliers')" data-tab="tab-suppliers">
+                <span>🤝</span> <span data-translate="nav_suppliers">आपूर्तिकर्ता</span>
+              </a>
+              <a href="#" class="nav-item" onclick="switchDashboardTab('tab-staff')" data-tab="tab-staff">
+                <span>👥</span> <span data-translate="nav_staff">कर्मचारी प्रबंधन</span>
+              </a>
+              <a href="#" class="nav-item" onclick="switchDashboardTab('tab-history')" data-tab="tab-history">
+                <span>📜</span> <span data-translate="nav_history">बिक्री इतिहास</span>
+              </a>
+              <a href="#" class="nav-item" onclick="switchDashboardTab('tab-reports')" data-tab="tab-reports">
+                <span>📈</span> <span data-translate="nav_reports">रिपोर्ट्स</span>
+              </a>
+              <a href="#" class="nav-item" onclick="switchDashboardTab('tab-settings')" data-tab="tab-settings">
+                <span>⚙</span> <span data-translate="nav_settings">बैकअप व सेटिंग्स</span>
+              </a>
+              <a href="index.html" class="nav-item pos-redirect-nav" style="border-top: 1px solid rgba(0,0,0,0.06); margin-top: 15px; padding-top: 15px;">
+                <span>🛒</span> <span data-translate="nav_goto_pos">स्टाफ टर्मिनल (Staff POS)</span>
+              </a>
+            </nav>
+          </aside>
+          
+          <!-- Dashboard Panels Content -->
+          <div class="dashboard-content">
+            
+            <!-- PANEL A: KPI Stats Dashboard -->
+            <div id="tab-kpi" class="dashboard-panel active">
+              <h2 data-translate="panel_kpi_title">आज की रिपोर्ट (Today's Summary)</h2>
+              
+              <div class="kpi-grid">
+                <div class="kpi-card sales-kpi">
+                  <div class="kpi-card-inner">
+                    <div>
+                      <h4 data-translate="kpi_today_sales">आज की कुल बिक्री</h4>
+                      <p id="kpi-sales">₹0.00</p>
+                    </div>
+                    <span class="kpi-icon">💰</span>
+                  </div>
+                </div>
+                <div class="kpi-card upi-kpi">
+                  <div class="kpi-card-inner">
+                    <div>
+                      <h4 data-translate="kpi_today_online">ऑनलाइन (UPI) भुगतान</h4>
+                      <p id="kpi-online">₹0.00</p>
+                    </div>
+                    <span class="kpi-icon">⚡</span>
+                  </div>
+                </div>
+                <div class="kpi-card cash-kpi">
+                  <div class="kpi-card-inner">
+                    <div>
+                      <h4 data-translate="kpi_today_offline">ऑफ़लाइन (नकद)</h4>
+                      <p id="kpi-offline">₹0.00</p>
+                    </div>
+                    <span class="kpi-icon">💵</span>
+                  </div>
+                </div>
+                <div class="kpi-card orders-kpi">
+                  <div class="kpi-card-inner">
+                    <div>
+                      <h4 data-translate="kpi_today_orders">कुल ऑर्डर्स</h4>
+                      <p id="kpi-orders">0</p>
+                    </div>
+                    <span class="kpi-icon">📦</span>
+                  </div>
+                </div>
+                <div class="kpi-card discount-kpi">
+                  <div class="kpi-card-inner">
+                    <div>
+                      <h4 data-translate="kpi_today_discount">दी गई कुल छूट</h4>
+                      <p id="kpi-discount">₹0.00</p>
+                    </div>
+                    <span class="kpi-icon">🎁</span>
+                  </div>
+                </div>
+                <div class="kpi-card extra-kpi">
+                  <div class="kpi-card-inner">
+                    <div>
+                      <h4 data-translate="kpi_today_extra">प्राप्त अतिरिक्त राशि</h4>
+                      <p id="kpi-extra">₹0.00</p>
+                    </div>
+                    <span class="kpi-icon">📈</span>
+                  </div>
+                </div>
+                <div class="kpi-card net-kpi">
+                  <div class="kpi-card-inner">
+                    <div>
+                      <h4 data-translate="kpi_today_net">शुद्ध आय (Net Income)</h4>
+                      <p id="kpi-net">₹0.00</p>
+                    </div>
+                    <span class="kpi-icon">⚖️</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="analytics-grid">
+                <div class="chart-container-box">
+                  <h3 data-translate="sales_trend_title">साप्ताहिक बिक्री रुझान (Weekly Sales Trend)</h3>
+                  <canvas id="salesChart"></canvas>
+                </div>
+                <div class="staff-sales-box">
+                  <h3 data-translate="staff_sales_title">कर्मचारी-वार बिक्री (Staff Performance)</h3>
+                  <div id="staff-sales-progress-bars" class="staff-bars-list">
+                    <!-- Loaded dynamically via JS -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- PANEL B: Menu Cards management -->
+            <div id="tab-menu" class="dashboard-panel">
+              <div class="panel-header-actions">
+                <h2 data-translate="panel_menu_title">मेनू प्रबंधन (Menu Management)</h2>
+                <button class="primary-btn add-btn" onclick="openAddMenuModal()">➕ <span data-translate="add_item_btn">नया आइटम जोड़ें</span></button>
+              </div>
+              
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th data-translate="th_photo">फोटो/आइकन</th>
+                      <th data-translate="th_name_hi">हिंदी नाम</th>
+                      <th data-translate="th_name_en">अंग्रेजी नाम</th>
+                      <th data-translate="th_price">मूल्य (₹)</th>
+                      <th data-translate="th_category">श्रेणी</th>
+                      <th data-translate="th_unit">इकाई (Unit)</th>
+                      <th data-translate="th_actions">कार्रवाई (Actions)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="menu-items-table-body">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- PANEL C: Raw Material management -->
+            <div id="tab-raw" class="dashboard-panel">
+              <div class="panel-header-actions">
+                <h2 data-translate="panel_raw_title">कच्चा माल प्रबंधन (Raw Materials)</h2>
+                <button class="primary-btn add-btn" onclick="openAddRawModal()">➕ <span data-translate="add_raw_btn">नया कच्चा माल जोड़ें</span></button>
+              </div>
+              
+              <div class="raw-cards-grid" id="raw-materials-grid">
+                <!-- Dynamically populated from JS with pictures -->
+              </div>
+            </div>
+            
+            <!-- PANEL D: Suppliers management -->
+            <div id="tab-suppliers" class="dashboard-panel">
+              <div class="panel-header-actions">
+                <h2 data-translate="panel_suppliers_title">आपूर्तिकर्ता प्रबंधन (Suppliers)</h2>
+                <button class="primary-btn add-btn" onclick="openAddSupplierModal()">➕ <span data-translate="add_supplier_btn">नया आपूर्तिकर्ता</span></button>
+              </div>
+              
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th data-translate="th_sup_name">आपूर्तिकर्ता नाम</th>
+                      <th data-translate="th_sup_phone">मोबाइल नंबर</th>
+                      <th data-translate="th_sup_due">देय भुगतान (Due)</th>
+                      <th data-translate="th_sup_notes">टिप्पणी</th>
+                      <th data-translate="th_actions">कार्रवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody id="suppliers-table-body">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- PANEL E: Staff management -->
+            <div id="tab-staff" class="dashboard-panel">
+              <div class="panel-header-actions">
+                <h2 data-translate="panel_staff_title">कर्मचारी प्रबंधन (Staff Management)</h2>
+                <button class="primary-btn add-btn" onclick="openAddStaffModal()">➕ <span data-translate="add_staff_btn">नया कर्मचारी</span></button>
+              </div>
+              
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th data-translate="th_staff_name">कर्मचारी का नाम</th>
+                      <th data-translate="th_staff_role">भूमिका</th>
+                      <th data-translate="th_staff_pin">4-अंकों का पिन (PIN)</th>
+                      <th data-translate="th_staff_sales">कुल बिक्री योगदान (₹)</th>
+                      <th data-translate="th_actions">कार्रवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody id="staff-table-body">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- PANEL F: Sales History -->
+            <div id="tab-history" class="dashboard-panel">
+              <div class="panel-header-actions">
+                <h2 data-translate="panel_history_title">बिक्री इतिहास (Sales History)</h2>
+                <div class="search-filter-box">
+                  <input type="date" id="history-date-filter" onchange="filterSalesHistory()">
+                  <input type="text" id="history-search-input" placeholder="ऑर्डर न. या स्टाफ... / Search ORD..." oninput="filterSalesHistory()">
+                </div>
+              </div>
+              
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th data-translate="th_ord_no">ऑर्डर नंबर</th>
+                      <th data-translate="th_ord_date">दिनांक व समय</th>
+                      <th data-translate="th_ord_staff">स्टाफ नाम</th>
+                      <th data-translate="th_ord_items">सामान</th>
+                      <th data-translate="th_ord_orig">मूल दर</th>
+                      <th data-translate="th_ord_final">अंतिम दर</th>
+                      <th data-translate="th_ord_discount">छूट / अतिरिक्त</th>
+                      <th data-translate="th_ord_mode">भुगतान माध्यम</th>
+                      <th data-translate="th_ord_paid">ग्राहक भुगतान</th>
+                      <th data-translate="th_ord_due">बकाया (Due)</th>
+                      <th data-translate="th_actions">रसीद</th>
+                    </tr>
+                  </thead>
+                  <tbody id="history-table-body">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- PANEL G: Reports Dashboard -->
+            <div id="tab-reports" class="dashboard-panel">
+              <div class="reports-header-bar">
+                <h2 data-translate="panel_reports_title">रिपोर्ट जनरेटर (Reports)</h2>
+                <div class="reports-controls">
+                  <select id="report-type-select" onchange="generateReport()">
+                    <option value="daily" data-translate="opt_rep_daily">दैनिक रिपोर्ट (Daily Report)</option>
+                    <option value="weekly" data-translate="opt_rep_weekly">साप्ताहिक रिपोर्ट (Weekly Report)</option>
+                    <option value="monthly" data-translate="opt_rep_monthly">मासिक रिपोर्ट (Monthly Report)</option>
+                    <option value="staff" data-translate="opt_rep_staff">कर्मचारी बिक्री (Staff Sales)</option>
+                    <option value="discounts" data-translate="opt_rep_discounts">छूट रिपोर्ट (Discount Report)</option>
+                    <option value="purchase" data-translate="opt_rep_purchase">खरीद व खर्च (Purchase & Expenses)</option>
+                    <option value="profit" data-translate="opt_rep_profit">लाभ और हानि (Profit & Loss)</option>
+                  </select>
+                  <button class="action-btn export-excel-btn" onclick="exportReportToExcel()">📄 Excel</button>
+                  <button class="action-btn export-pdf-btn" onclick="exportReportToPDF()">🖨️ PDF / Print</button>
+                </div>
+              </div>
+              
+              <div id="report-result-box" class="report-box">
+                <!-- Report result -->
+              </div>
+            </div>
+            
+            <!-- PANEL H: Settings Panel -->
+            <div id="tab-settings" class="dashboard-panel">
+              <h2 data-translate="panel_settings_title">डैशबोर्ड सेटिंग्स और बैकअप</h2>
+              
+              <div class="settings-grid">
+                <div class="settings-card">
+                  <h3 data-translate="set_pass_title">पासवर्ड बदलें (Change Password)</h3>
+                  <div class="form-group-settings">
+                    <input type="password" id="set-pass-new" placeholder="नया पासवर्ड लिखें / New Password" class="custom-input">
+                    <button class="primary-btn" onclick="changeOwnerPassword()" data-translate="save_btn">सुरक्षित करें</button>
+                  </div>
+                </div>
+                
+                <div class="settings-card">
+                  <h3 data-translate="set_backup_title">डेटा बैकअप और रीस्टोर</h3>
+                  <p data-translate="set_backup_desc">सभी बिक्री इतिहास, कच्चा माल और सेटिंग्स का बैकअप लें।</p>
+                  <div class="backup-actions">
+                    <button class="primary-btn backup-btn" onclick="downloadBackup()">📥 बैकअप डाउनलोड करें (Backup JSON)</button>
+                    
+                    <div class="restore-wrapper">
+                      <label for="restore-file-input" class="restore-label">📤 रीस्टोर करें (Restore Backup)</label>
+                      <input type="file" id="restore-file-input" accept=".json" onchange="uploadBackup(event)">
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="settings-card alert-card">
+                  <h3 data-translate="set_reset_title">सिस्टम रीसेट (Danger Area)</h3>
+                  <p data-translate="set_reset_desc">यह सभी बिक्री डेटा को मिटाकर फैक्ट्री रीसेट कर देगा।</p>
+                  <button class="danger-btn" onclick="resetDatabaseSystem()">⚠️ फैक्ट्री रीसेट करें (Reset All Data)</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- MODAL 1: Menu Item Form (Add / Edit) -->
+    <div id="menu-modal" class="modal-backdrop hidden">
+      <div class="modal-card form-modal-card">
+        <div class="modal-header">
+          <h3 id="menu-modal-title">नया आइटम जोड़ें</h3>
+          <button class="modal-close-btn" onclick="closeMenuModal()">✖</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="menu-form-id">
+          
+          <div class="form-grid">
+            <div class="form-group-settings">
+              <label for="menu-form-name-hi">हिंदी नाम (Hindi Name) *</label>
+              <input type="text" id="menu-form-name-hi" class="custom-input" required placeholder="जैसे: समोसा">
+            </div>
+            <div class="form-group-settings">
+              <label for="menu-form-name-en">अंग्रेजी नाम (English Name) *</label>
+              <input type="text" id="menu-form-name-en" class="custom-input" required placeholder="e.g. Samosa">
+            </div>
+            <div class="form-group-settings">
+              <label for="menu-form-price">कीमत (Price ₹) *</label>
+              <input type="number" id="menu-form-price" class="custom-input" required placeholder="12">
+            </div>
+            <div class="form-group-settings">
+              <label for="menu-form-category">श्रेणी (Category) *</label>
+              <select id="menu-form-category" class="custom-input">
+                <option value="meals">भोजन (Meals)</option>
+                <option value="snacks">नाश्ता (Snacks)</option>
+                <option value="sweets">मिठाई (Sweets)</option>
+                <option value="fastfood">फास्ट फूड (Fast Food)</option>
+              </select>
+            </div>
+            <div class="form-group-settings">
+              <label for="menu-form-unit">इकाई (Unit)</label>
+              <select id="menu-form-unit" class="custom-input">
+                <option value="Plate">Plate (प्लेट)</option>
+                <option value="Pc">Pc (पीस)</option>
+                <option value="Kg">Kg (किलो)</option>
+              </select>
+            </div>
+            <div class="form-group-settings">
+              <label for="menu-form-image">फोटो / आइकन (Emoji Selector)</label>
+              <select id="menu-form-image" class="custom-input">
+                <option value="🥟">🥟 कचौरी/समोसा (Dumpling)</option>
+                <option value="🍲">🍲 छोला भटूरा (Pot)</option>
+                <option value="🫓">🫓 रोटी/पराठा (Flatbread)</option>
+                <option value="🍚">🍚 चावल (Rice)</option>
+                <option value="🍝">🍝 चाउमीन (Noodles)</option>
+                <option value="🍮">🍮 रसमलाई/पुडिंग</option>
+                <option value="⚪">⚪ रसगुल्ला</option>
+                <option value="🌀">🌀 जलेबी</option>
+                <option value="🧁">🧁 क्रीम चप</option>
+                <option value="🧆">🧆 गुलाब जामुन</option>
+                <option value="🍩">🍩 बालूशाही</option>
+                <option value="🍟">🍟 फास्ट फूड</option>
+                <option value="☕">☕ चाय / कॉफ़ी</option>
+                <option value="🥤">🥤 लस्सी / जूस</option>
+              </select>
+            </div>
+          </div>
+          <button class="primary-btn menu-save-btn" onclick="saveMenuItem()" style="margin-top: 20px; width: 100%;">सुरक्षित करें (Save)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 2: Raw Material Form -->
+    <div id="raw-modal" class="modal-backdrop hidden">
+      <div class="modal-card form-modal-card">
+        <div class="modal-header">
+          <h3 id="raw-modal-title">नया कच्चा माल</h3>
+          <button class="modal-close-btn" onclick="closeRawModal()">✖</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="raw-form-id">
+          <div class="form-grid">
+            <div class="form-group-settings">
+              <label for="raw-form-name-hi">हिंदी नाम (Hindi Name) *</label>
+              <input type="text" id="raw-form-name-hi" class="custom-input" required placeholder="जैसे: आलू">
+            </div>
+            <div class="form-group-settings">
+              <label for="raw-form-name-en">अंग्रेजी नाम (English Name) *</label>
+              <input type="text" id="raw-form-name-en" class="custom-input" required placeholder="e.g. Potato">
+            </div>
+            <div class="form-group-settings">
+              <label for="raw-form-qty">मात्रा (Quantity) *</label>
+              <input type="number" id="raw-form-qty" class="custom-input" required placeholder="10">
+            </div>
+            <div class="form-group-settings">
+              <label for="raw-form-unit">इकाई (Unit)</label>
+              <select id="raw-form-unit" class="custom-input">
+                <option value="Kg">Kg (किलोग्राम)</option>
+                <option value="Litre">Litre (लीटर)</option>
+                <option value="Packet">Packet (पैकेट)</option>
+              </select>
+            </div>
+            <div class="form-group-settings">
+              <label for="raw-form-supplier">आपूर्तिकर्ता (Supplier)</label>
+              <select id="raw-form-supplier" class="custom-input">
+                <!-- Loaded dynamically -->
+              </select>
+            </div>
+            <div class="form-group-settings">
+              <label for="raw-form-min">न्यूनतम चेतावनी सीमा (Min Alert Limit)</label>
+              <input type="number" id="raw-form-min" class="custom-input" placeholder="10">
+            </div>
+            
+            <div class="form-group-settings flex-full" id="raw-purchase-fields">
+              <h4 style="margin: 10px 0 5px; color: var(--gold-primary);" data-translate="h_purchase_details">खरीद विवरण (Purchase Details)</h4>
+              <div class="form-grid-inner" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                <div>
+                  <label for="raw-form-bill">बिल राशि (Bill Amount ₹)</label>
+                  <input type="number" id="raw-form-bill" class="custom-input" placeholder="0">
+                </div>
+                <div>
+                  <label for="raw-form-paid">भुगतान राशि (Paid ₹)</label>
+                  <input type="number" id="raw-form-paid" class="custom-input" placeholder="0">
+                </div>
+                <div>
+                  <label for="raw-form-notes">टिप्पणी (Notes)</label>
+                  <input type="text" id="raw-form-notes" class="custom-input" placeholder="खरीद विवरण">
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="primary-btn raw-save-btn" onclick="saveRawMaterial()" style="margin-top: 20px; width: 100%;">सुरक्षित करें (Save)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: Supplier Form -->
+    <div id="supplier-modal" class="modal-backdrop hidden">
+      <div class="modal-card form-modal-card">
+        <div class="modal-header">
+          <h3 id="supplier-modal-title">नया आपूर्तिकर्ता</h3>
+          <button class="modal-close-btn" onclick="closeSupplierModal()">✖</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="supplier-form-id">
+          <div class="form-grid">
+            <div class="form-group-settings">
+              <label for="supplier-form-name">नाम (Name) *</label>
+              <input type="text" id="supplier-form-name" class="custom-input" required placeholder="जैसे: राम एंड संस">
+            </div>
+            <div class="form-group-settings">
+              <label for="supplier-form-phone">मोबाइल न. (Phone)</label>
+              <input type="text" id="supplier-form-phone" class="custom-input" placeholder="9876543210">
+            </div>
+            <div class="form-group-settings">
+              <label for="supplier-form-due">बकाया राशि (Due Payment ₹)</label>
+              <input type="number" id="supplier-form-due" class="custom-input" placeholder="0">
+            </div>
+            <div class="form-group-settings">
+              <label for="supplier-form-notes">टिप्पणी (Notes)</label>
+              <input type="text" id="supplier-form-notes" class="custom-input" placeholder="सब्जी या किराना">
+            </div>
+          </div>
+          <button class="primary-btn supplier-save-btn" onclick="saveSupplier()" style="margin-top: 20px; width: 100%;">सुरक्षित करें (Save)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 4: Staff Form -->
+    <div id="staff-modal" class="modal-backdrop hidden">
+      <div class="modal-card form-modal-card">
+        <div class="modal-header">
+          <h3 id="staff-modal-title">नया कर्मचारी</h3>
+          <button class="modal-close-btn" onclick="closeStaffModal()">✖</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="staff-form-id">
+          <div class="form-grid">
+            <div class="form-group-settings">
+              <label for="staff-form-name-hi">हिंदी नाम (Hindi Name) *</label>
+              <input type="text" id="staff-form-name-hi" class="custom-input" required placeholder="जैसे: रमेश कुमार">
+            </div>
+            <div class="form-group-settings">
+              <label for="staff-form-name-en">अंग्रेजी नाम (English Name) *</label>
+              <input type="text" id="staff-form-name-en" class="custom-input" required placeholder="e.g. Ramesh Kumar">
+            </div>
+            <div class="form-group-settings">
+              <label for="staff-form-pin">4-अंकों का पिन (PIN) *</label>
+              <input type="password" id="staff-form-pin" maxlength="4" class="custom-input" required placeholder="1234">
+            </div>
+          </div>
+          <button class="primary-btn staff-save-btn" onclick="saveStaff()" style="margin-top: 20px; width: 100%;">सुरक्षित करें (Save)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 5: Receipt Viewer -->
+    <div id="receipt-modal" class="modal-backdrop hidden">
+      <div class="modal-card receipt-modal-card">
+        <div class="modal-header">
+          <h3 data-translate="receipt_title">बिल रसीद (Bill Receipt)</h3>
+          <button class="modal-close-btn" onclick="closeReceiptModal()">✖</button>
+        </div>
+        <div class="modal-body printable-receipt-body" id="printable-receipt">
+          <!-- Receipt Content -->
+        </div>
+        <div class="modal-footer receipt-footer">
+          <button class="primary-btn print-receipt-btn" onclick="printReceiptContent()">🖨️ रसीद प्रिंट करें (Print)</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="db.js"></script>
+  <script src="owner.js"></script>
+</body>
+</html>

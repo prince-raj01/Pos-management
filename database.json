@@ -1,0 +1,469 @@
+{
+  "initialized_v7": "true",
+  "menu": [
+    {
+      "id": "rice_full",
+      "nameEn": "Rice Full Plate",
+      "nameHi": "चावल फुल",
+      "price": 70,
+      "category": "meals",
+      "image": "images/rice_plate.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "rice_half",
+      "nameEn": "Rice Half Plate",
+      "nameHi": "चावल हाफ",
+      "price": 50,
+      "category": "meals",
+      "image": "images/rice_plate.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "roti_plate",
+      "nameEn": "Roti Plate",
+      "nameHi": "रोटी",
+      "price": 70,
+      "category": "meals",
+      "image": "images/rice_plate.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "chhole_bhature_full",
+      "nameEn": "Chhole Bhature (Full)",
+      "nameHi": "छोला भटूरा (फुल)",
+      "price": 40,
+      "category": "snacks",
+      "image": "images/chhole_bhature.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "chhole_bhature_half",
+      "nameEn": "Chhole Bhature (Half)",
+      "nameHi": "छोला भटूरा (हाफ)",
+      "price": 25,
+      "category": "snacks",
+      "image": "images/chhole_bhature.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "kachori_sabzi",
+      "nameEn": "Kachori Sabzi (4+1)",
+      "nameHi": "कचौरी सब्जी (4+1)",
+      "price": 35,
+      "category": "snacks",
+      "image": "images/kachori_sabzi.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "samosa",
+      "nameEn": "Samosa",
+      "nameHi": "समोसा",
+      "price": 12,
+      "category": "snacks",
+      "image": "images/samosa.png",
+      "unit": "Pc"
+    },
+    {
+      "id": "khasta",
+      "nameEn": "Khasta Kachori",
+      "nameHi": "खास्ता",
+      "price": 12,
+      "category": "snacks",
+      "image": "images/khasta.png",
+      "unit": "Pc"
+    },
+    {
+      "id": "jalebi_pc",
+      "nameEn": "Jalebi (Per Piece)",
+      "nameHi": "जलेबी (पीस)",
+      "price": 7,
+      "category": "sweets",
+      "image": "images/jalebi.png",
+      "unit": "Pc"
+    },
+    {
+      "id": "jalebi_kg",
+      "nameEn": "Jalebi (Per Kg)",
+      "nameHi": "जलेबी (किलो)",
+      "price": 140,
+      "category": "sweets",
+      "image": "images/jalebi.png",
+      "unit": "Kg"
+    },
+    {
+      "id": "chowmein_full",
+      "nameEn": "Chowmein (Full)",
+      "nameHi": "चाउमीन (फुल)",
+      "price": 60,
+      "category": "fastfood",
+      "image": "images/chowmein.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "chowmein_half",
+      "nameEn": "Chowmein (Half)",
+      "nameHi": "चाउमीन (हाफ)",
+      "price": 35,
+      "category": "fastfood",
+      "image": "images/chowmein.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "paneer_chowmein",
+      "nameEn": "Paneer Chowmein",
+      "nameHi": "पनिर चाउमीन",
+      "price": 90,
+      "category": "fastfood",
+      "image": "images/chowmein.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "chaat",
+      "nameEn": "Chaat Plate",
+      "nameHi": "चाट",
+      "price": 35,
+      "category": "snacks",
+      "image": "images/kachori_sabzi.png",
+      "unit": "Plate"
+    },
+    {
+      "id": "rasmalai",
+      "nameEn": "Rasmalai",
+      "nameHi": "रसमलाई",
+      "price": 50,
+      "category": "sweets",
+      "image": "images/rasmalai.png",
+      "unit": "Pc"
+    },
+    {
+      "id": "rasgulla",
+      "nameEn": "Rasgulla",
+      "nameHi": "रसगुल्ला",
+      "price": 15,
+      "category": "sweets",
+      "image": "images/rasgulla.png",
+      "unit": "Pc"
+    },
+    {
+      "id": "suryamukhi",
+      "nameEn": "Suryamukhi Sweet",
+      "nameHi": "सूर्यमुखी",
+      "price": 280,
+      "category": "sweets",
+      "image": "images/peda.png",
+      "unit": "Kg"
+    },
+    {
+      "id": "cream_chop",
+      "nameEn": "Cream Chop",
+      "nameHi": "क्रिम चप",
+      "price": 320,
+      "category": "sweets",
+      "image": "images/peda.png",
+      "unit": "Kg"
+    },
+    {
+      "id": "gulab_jamun_cream",
+      "nameEn": "Cream Gulab Jamun",
+      "nameHi": "गुलाब जामुन क्रिम",
+      "price": 340,
+      "category": "sweets",
+      "image": "images/gulab_jamun.png",
+      "unit": "Kg"
+    },
+    {
+      "id": "gulab_jamun",
+      "nameEn": "Gulab Jamun",
+      "nameHi": "गुलाब जामुन",
+      "price": 280,
+      "category": "sweets",
+      "image": "images/gulab_jamun.png",
+      "unit": "Kg"
+    },
+    {
+      "id": "balushahi",
+      "nameEn": "Balushahi",
+      "nameHi": "बालूशाही",
+      "price": 200,
+      "category": "sweets",
+      "image": "images/peda.png",
+      "unit": "Kg"
+    },
+    {
+      "id": "peda",
+      "nameEn": "Peda",
+      "nameHi": "पेड़ा",
+      "price": 450,
+      "category": "sweets",
+      "image": "images/peda.png",
+      "unit": "Kg"
+    }
+  ],
+  "raw": [
+    {
+      "id": "potato",
+      "nameEn": "Potato",
+      "nameHi": "आलू",
+      "image": "images/raw_potato.png",
+      "quantity": 150,
+      "unit": "Kg",
+      "supplier": "Ram & Sons",
+      "minStock": 20
+    },
+    {
+      "id": "onion",
+      "nameEn": "Onion",
+      "nameHi": "प्याज",
+      "image": "images/raw_onion.png",
+      "quantity": 80,
+      "unit": "Kg",
+      "supplier": "Ram & Sons",
+      "minStock": 15
+    },
+    {
+      "id": "tomato",
+      "nameEn": "Tomato",
+      "nameHi": "टमाटर",
+      "image": "images/raw_tomato.png",
+      "quantity": 45,
+      "unit": "Kg",
+      "supplier": "Ram & Sons",
+      "minStock": 10
+    },
+    {
+      "id": "milk",
+      "nameEn": "Milk",
+      "nameHi": "दूध",
+      "image": "images/raw_milk.png",
+      "quantity": 120,
+      "unit": "Litre",
+      "supplier": "Krishna Dairy",
+      "minStock": 30
+    },
+    {
+      "id": "paneer",
+      "nameEn": "Paneer",
+      "nameHi": "पनीर",
+      "image": "images/raw_paneer.png",
+      "quantity": 25,
+      "unit": "Kg",
+      "supplier": "Krishna Dairy",
+      "minStock": 5
+    },
+    {
+      "id": "oil",
+      "nameEn": "Oil",
+      "nameHi": "तेल",
+      "image": "images/raw_oil.png",
+      "quantity": 90,
+      "unit": "Litre",
+      "supplier": "Vaishnav Provisions",
+      "minStock": 15
+    },
+    {
+      "id": "rice",
+      "nameEn": "Rice",
+      "nameHi": "चावल",
+      "image": "images/rice_plate.png",
+      "quantity": 200,
+      "unit": "Kg",
+      "supplier": "Vaishnav Provisions",
+      "minStock": 50
+    },
+    {
+      "id": "wheat_flour",
+      "nameEn": "Wheat Flour",
+      "nameHi": "आटा",
+      "image": "images/khasta.png",
+      "quantity": 250,
+      "unit": "Kg",
+      "supplier": "Vaishnav Provisions",
+      "minStock": 50
+    },
+    {
+      "id": "salt",
+      "nameEn": "Salt",
+      "nameHi": "नमक",
+      "image": "images/raw_milk.png",
+      "quantity": 40,
+      "unit": "Packet",
+      "supplier": "Vaishnav Provisions",
+      "minStock": 5
+    },
+    {
+      "id": "sugar",
+      "nameEn": "Sugar",
+      "nameHi": "चीनी",
+      "image": "images/rasgulla.png",
+      "quantity": 150,
+      "unit": "Kg",
+      "supplier": "Vaishnav Provisions",
+      "minStock": 25
+    },
+    {
+      "id": "ginger",
+      "nameEn": "Ginger",
+      "nameHi": "अदरक",
+      "image": "images/raw_potato.png",
+      "quantity": 15,
+      "unit": "Kg",
+      "supplier": "Ram & Sons",
+      "minStock": 3
+    },
+    {
+      "id": "garlic",
+      "nameEn": "Garlic",
+      "nameHi": "लहसुन",
+      "image": "images/raw_potato.png",
+      "quantity": 20,
+      "unit": "Kg",
+      "supplier": "Ram & Sons",
+      "minStock": 3
+    },
+    {
+      "id": "green_chilli",
+      "nameEn": "Green Chilli",
+      "nameHi": "हरी मिर्च",
+      "image": "images/raw_tomato.png",
+      "quantity": 12,
+      "unit": "Kg",
+      "supplier": "Ram & Sons",
+      "minStock": 2
+    },
+    {
+      "id": "coriander",
+      "nameEn": "Coriander",
+      "nameHi": "धनिया",
+      "image": "images/raw_tomato.png",
+      "quantity": 10,
+      "unit": "Kg",
+      "supplier": "Ram & Sons",
+      "minStock": 2
+    },
+    {
+      "id": "butter",
+      "nameEn": "Butter",
+      "nameHi": "मक्खन",
+      "image": "images/raw_milk.png",
+      "quantity": 35,
+      "unit": "Packet",
+      "supplier": "Krishna Dairy",
+      "minStock": 5
+    },
+    {
+      "id": "ghee",
+      "nameEn": "Ghee",
+      "nameHi": "घी",
+      "image": "images/raw_milk.png",
+      "quantity": 40,
+      "unit": "Litre",
+      "supplier": "Krishna Dairy",
+      "minStock": 8
+    },
+    {
+      "id": "curd",
+      "nameEn": "Curd",
+      "nameHi": "दही",
+      "image": "images/raw_milk.png",
+      "quantity": 50,
+      "unit": "Kg",
+      "supplier": "Krishna Dairy",
+      "minStock": 10
+    },
+    {
+      "id": "tea_leaves",
+      "nameEn": "Tea Leaves",
+      "nameHi": "चाय पत्ती",
+      "image": "images/jalebi.png",
+      "quantity": 15,
+      "unit": "Packet",
+      "supplier": "Vaishnav Provisions",
+      "minStock": 3
+    },
+    {
+      "id": "chickpeas",
+      "nameEn": "Chickpeas",
+      "nameHi": "चना",
+      "image": "images/chhole_bhature.png",
+      "quantity": 80,
+      "unit": "Kg",
+      "supplier": "Vaishnav Provisions",
+      "minStock": 15
+    },
+    {
+      "id": "gram_flour",
+      "nameEn": "Gram Flour",
+      "nameHi": "बेसन",
+      "image": "images/khasta.png",
+      "quantity": 120,
+      "unit": "Kg",
+      "supplier": "Vaishnav Provisions",
+      "minStock": 20
+    },
+    {
+      "id": "spices",
+      "nameEn": "Spices",
+      "nameHi": "मसाले",
+      "image": "images/chhole_bhature.png",
+      "quantity": 50,
+      "unit": "Packet",
+      "supplier": "Vaishnav Provisions",
+      "minStock": 10
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "sup_1",
+      "name": "Ram & Sons",
+      "phone": "9876543210",
+      "due": 4500,
+      "notes": "Vegetable Supplier"
+    },
+    {
+      "id": "sup_2",
+      "name": "Krishna Dairy",
+      "phone": "9876543211",
+      "due": 12000,
+      "notes": "Milk, Paneer & Ghee"
+    },
+    {
+      "id": "sup_3",
+      "name": "Vaishnav Provisions",
+      "phone": "9876543212",
+      "due": 8500,
+      "notes": "Grocery & Dry Ration"
+    }
+  ],
+  "staff": [
+    {
+      "id": "staff_1",
+      "nameEn": "Ramesh Kumar",
+      "nameHi": "रमेश कुमार",
+      "role": "staff",
+      "pin": "1111",
+      "sales": 0
+    },
+    {
+      "id": "staff_2",
+      "nameEn": "Suresh Sharma",
+      "nameHi": "सुरेश शर्मा",
+      "role": "staff",
+      "pin": "2222",
+      "sales": 0
+    },
+    {
+      "id": "staff_3",
+      "nameEn": "Amit Yadav",
+      "nameHi": "अमित यादव",
+      "role": "staff",
+      "pin": "3333",
+      "sales": 0
+    }
+  ],
+  "orders": [],
+  "purchases": [],
+  "expenses": [],
+  "password": "owner123",
+  "lang": "hi"
+}
