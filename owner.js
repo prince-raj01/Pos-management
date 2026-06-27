@@ -171,6 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedLang) STATE.lang = savedLang;
   applyTranslations();
   showScreen('screen-owner-login');
+  if (window.location.protocol === "file:") {
+    showFileProtocolWarning();
+  }
 });
 
 function applyTranslations() {
@@ -1272,3 +1275,34 @@ window.addEventListener('storage', (e) => {
     }
   }
 });
+
+function showFileProtocolWarning() {
+  const banner = document.createElement("div");
+  banner.className = "file-warning-banner";
+  banner.style.cssText = `
+    background-color: #ff9800;
+    color: white;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99999;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-sizing: border-box;
+  `;
+  banner.innerHTML = `
+    <span>⚠️</span>
+    <span><strong>ध्यान दें (Warning):</strong> आप इसे फ़ाइल से चला रहे हैं। कर्मचारी और मालिक के बीच डेटा सिंक नहीं होगा। कृपया <strong>run_network_server.bat</strong> पर डबल-क्लिक करके सर्वर शुरू करें और <strong>http://localhost:8080</strong> खोलें।</span>
+    <button onclick="this.parentElement.remove()" style="background:none; border:none; color:white; cursor:pointer; font-size:1.1rem; margin-left:15px; font-weight:bold;">✖</button>
+  `;
+  document.body.appendChild(banner);
+  document.body.style.paddingTop = "40px";
+}
