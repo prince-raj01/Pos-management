@@ -123,6 +123,17 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.location.protocol === "file:") {
     showFileProtocolWarning();
   }
+  if (window.DB && typeof window.DB.subscribe === "function") {
+    window.DB.subscribe((event) => {
+      if (!event) return;
+      if (document.getElementById("screen-staff-select").classList.contains("hidden") === false) {
+        loadStaffSelectionList();
+      }
+      if (document.getElementById("screen-staff-pos").classList.contains("hidden") === false) {
+        renderFoodGrid();
+      }
+    });
+  }
   startDatabasePolling();
 });
 

@@ -229,12 +229,30 @@ function showScreen(screenId) {
 
 function verifyOwnerPassword() {
   const password = document.getElementById("owner-pass-input").value;
-  const dbPassword = window.DB.get("password");
-  
-  if (password === dbPassword) {
-    showScreen('screen-owner-dashboard');
-    switchDashboardTab(STATE.activeDashboardTab);
-  } else {
+  const tryLocalLogin = () => {
+    const dbPassword = window.DB.get("password");
+    if (password === dbPassword) {
+      showScreen('screen-owner-dashboard');
+      switchDashboardTab(STATE.activeDashboardTab);
+      return true;
+    }
+    return false;
+  };
+
+  if (window.DB && typeof window.DB.requestJson === "function" && window.location.protocol.startsWith("http")) {
+    try {
+      const xhr = window.DB.requestJson("POST", "/api/auth/owner/verify", { password });
+      if (xhr.status === 200) {
+        showScreen('screen-owner-dashboard');
+        switchDashboardTab(STATE.activeDashboardTab);
+        return;
+      }
+    } catch (err) {
+      console.error("Owner auth request failed, falling back to local check:", err);
+    }
+  }
+
+  if (!tryLocalLogin()) {
     document.getElementById("owner-login-error").classList.remove("hidden");
   }
 }
@@ -1276,6 +1294,21 @@ window.addEventListener('storage', (e) => {
     }
   }
 });
+
+if (window.DB && typeof window.DB.subscribe === "function") {
+  window.DB.subscribe((event) => {
+    if (!event || !event.key) return;
+    if (document.getElementById("screen-owner-dashboard").classList.contains("hidden") === false) {
+      if (STATE.activeDashboardTab === 'tab-kpi') loadKPIData();
+      else if (STATE.activeDashboardTab === 'tab-menu') renderMenuTable();
+      else if (STATE.activeDashboardTab === 'tab-raw') renderRawMaterialsGrid();
+      else if (STATE.activeDashboardTab === 'tab-suppliers') renderSuppliersTable();
+      else if (STATE.activeDashboardTab === 'tab-staff') renderStaffTable();
+      else if (STATE.activeDashboardTab === 'tab-history') renderSalesHistoryTable();
+      else if (STATE.activeDashboardTab === 'tab-reports') generateReport();
+    }
+  });
+}
 
 function showFileProtocolWarning() {
   const banner = document.createElement("div");

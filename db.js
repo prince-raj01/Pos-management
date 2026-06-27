@@ -62,6 +62,28 @@ const DEFAULT_STAFF = [
 ];
 
 const IS_SERVER = window.location.protocol.startsWith("http");
+const CLIENT_ID_KEY = "mv_pos_client_id";
+const CLIENT_ID = (() => {
+  const existing = localStorage.getItem(CLIENT_ID_KEY);
+  if (existing) return existing;
+  const created = `client_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  localStorage.setItem(CLIENT_ID_KEY, created);
+  return created;
+})();
+
+function requestJson(method, url, payload = undefined) {
+  const xhr = new XMLHttpRequest();
+  xhr.open(method, url, false);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("X-MV-Client-Id", CLIENT_ID);
+  xhr.send(payload === undefined ? null : JSON.stringify(payload));
+  return xhr;
+}
+
+function ensureLocalFallback(key, value) {
+  localStorage.setItem("mv_pos_" + key, JSON.stringify(value));
+  return value;
+}
 
 // Initialize LocalStorage if empty
 function initializeDatabase() {
@@ -101,10 +123,7 @@ function initializeDatabase() {
       // Sync all defaults to the server/cloud database synchronously
       try {
         const syncKey = (key, val) => {
-          const xhr = new XMLHttpRequest();
-          xhr.open("POST", `/api/db?key=${key}`, false);
-          xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.send(JSON.stringify(val));
+          requestJson("POST", `/api/db?key=${key}`, val);
         };
         syncKey("initialized_v7", "true");
         syncKey("menu", DEFAULT_MENU);
@@ -129,9 +148,7 @@ window.DB = {
   get: (key) => {
     if (IS_SERVER) {
       try {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", `/api/db?key=${key}`, false);
-        xhr.send();
+        const xhr = requestJson("GET", `/api/db?key=${key}`);
         if (xhr.status === 200) {
           const resp = xhr.responseText;
           if (resp !== "null" && resp !== "") {
@@ -145,13 +162,10 @@ window.DB = {
     return JSON.parse(localStorage.getItem("mv_pos_" + key));
   },
   set: (key, val) => {
-    localStorage.setItem("mv_pos_" + key, JSON.stringify(val));
+    ensureLocalFallback(key, val);
     if (IS_SERVER) {
       try {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", `/api/db?key=${key}`, false);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify(val));
+        requestJson("POST", `/api/db?key=${key}`, val);
       } catch (e) {
         console.error(`Server DB write failed for key ${key}:`, e);
       }
@@ -170,5 +184,34 @@ window.DB = {
     localStorage.removeItem("mv_pos_initialized_v7");
     initializeDatabase();
     window.location.reload();
+  },
+  clientId: CLIENT_ID,
+  requestJson,
+  subscribe: (onChange) => {
+    if (!IS_SERVER || typeof EventSource === "undefined") {
+      return null;
+    }
+
+    try {
+      const source = new EventSource("/api/db/events");
+      source.addEventListener("db-change", (event) => {
+        try {
+          onChange(JSON.parse(event.data));
+        } catch (err) {
+          console.error("Failed to parse db-change event:", err);
+        }
+      });
+      source.addEventListener("db-reset", (event) => {
+        try {
+          onChange(JSON.parse(event.data));
+        } catch (err) {
+          console.error("Failed to parse db-reset event:", err);
+        }
+      });
+      return source;
+    } catch (err) {
+      console.error("Unable to subscribe to database events:", err);
+      return null;
+    }
   }
 };
