@@ -266,7 +266,7 @@
       "nameEn": "Rice",
       "nameHi": "चावल",
       "image": "images/rice_plate.png",
-      "quantity": 200,
+      "quantity": 199.8,
       "unit": "Kg",
       "supplier": "Vaishnav Provisions",
       "minStock": 50
@@ -442,7 +442,7 @@
       "nameHi": "रमेश कुमार",
       "role": "staff",
       "pin": "1111",
-      "sales": 0
+      "sales": 237
     },
     {
       "id": "staff_2",
@@ -461,7 +461,84 @@
       "sales": 0
     }
   ],
-  "orders": [],
+  "orders": [
+    {
+      "orderNo": "ORD1001",
+      "date": "2026-06-27",
+      "time": "13:36",
+      "timestamp": 1782547596203,
+      "staff": "रमेश कुमार",
+      "items": [
+        {
+          "id": "rice_half",
+          "nameEn": "Rice Half Plate",
+          "nameHi": "चावल हाफ",
+          "price": 50,
+          "quantity": 1,
+          "unit": "Plate"
+        },
+        {
+          "id": "roti_plate",
+          "nameEn": "Roti Plate",
+          "nameHi": "रोटी",
+          "price": 70,
+          "quantity": 1,
+          "unit": "Plate"
+        },
+        {
+          "id": "chhole_bhature_full",
+          "nameEn": "Chhole Bhature (Full)",
+          "nameHi": "छोला भटूरा (फुल)",
+          "price": 40,
+          "quantity": 1,
+          "unit": "Plate"
+        }
+      ],
+      "originalPrice": 160,
+      "finalPrice": 160,
+      "discount": 0,
+      "extraAmount": 0,
+      "paymentMode": "Cash",
+      "customerPaid": 160,
+      "balance": 0,
+      "dueAmount": 0,
+      "reason": ""
+    },
+    {
+      "orderNo": "ORD1002",
+      "date": "2026-06-27",
+      "time": "13:36",
+      "timestamp": 1782547608933,
+      "staff": "रमेश कुमार",
+      "items": [
+        {
+          "id": "roti_plate",
+          "nameEn": "Roti Plate",
+          "nameHi": "रोटी",
+          "price": 70,
+          "quantity": 1,
+          "unit": "Plate"
+        },
+        {
+          "id": "jalebi_pc",
+          "nameEn": "Jalebi (Per Piece)",
+          "nameHi": "जलेबी (पीस)",
+          "price": 7,
+          "quantity": 1,
+          "unit": "Pc"
+        }
+      ],
+      "originalPrice": 77,
+      "finalPrice": 77,
+      "discount": 0,
+      "extraAmount": 0,
+      "paymentMode": "UPI",
+      "customerPaid": 77,
+      "balance": 0,
+      "dueAmount": 0,
+      "reason": ""
+    }
+  ],
   "purchases": [],
   "expenses": [],
   "password": "owner123",
