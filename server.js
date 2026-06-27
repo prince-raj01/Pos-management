@@ -7,6 +7,50 @@ const os = require('os');
 const PORT = 8080;
 const DB_FILE = path.join(__dirname, 'database.json');
 
+// Load local .env file if it exists
+const envPath = path.join(__dirname, '.env');
+if (fs.existsSync(envPath)) {
+  try {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const index = trimmed.indexOf('=');
+        if (index !== -1) {
+          const key = trimmed.substring(0, index).trim();
+          const val = trimmed.substring(index + 1).trim().replace(/(^['"]|['"]$)/g, '');
+          process.env[key] = val;
+        }
+      }
+    });
+    console.log("Local .env file configuration loaded successfully.");
+  } catch (err) {
+    console.error("Failed to parse local .env file:", err.message);
+  }
+}
+
+// MongoDB Atlas Configuration
+let mongoClient = null;
+let mongoDb = null;
+const mongoUri = process.env.MONGODB_URI;
+
+if (mongoUri) {
+  try {
+    const { MongoClient } = require('mongodb');
+    mongoClient = new MongoClient(mongoUri);
+    mongoClient.connect()
+      .then(() => {
+        mongoDb = mongoClient.db("pos_db");
+        console.log("Connected successfully to MongoDB Atlas database!");
+      })
+      .catch(err => {
+        console.error("MongoDB Atlas connection failed:", err);
+      });
+  } catch (e) {
+    console.error("MongoDB driver package not installed or loaded:", e.message);
+  }
+}
+
 // Get MIME type for file extensions
 function getMimeType(filePath) {
   const ext = path.extname(filePath).toLowerCase();
@@ -25,7 +69,7 @@ function getMimeType(filePath) {
   return mimeTypes[ext] || 'application/octet-stream';
 }
 
-// Load database from file
+// Load database from file (Local Fallback)
 function readDb() {
   if (!fs.existsSync(DB_FILE)) {
     return {};
@@ -39,7 +83,7 @@ function readDb() {
   }
 }
 
-// Save database to file
+// Save database to file (Local Fallback)
 function writeDb(dbData) {
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(dbData, null, 2), 'utf8');
@@ -48,7 +92,7 @@ function writeDb(dbData) {
   }
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   
   // API Endpoint: GET /api/db?key=xyz
@@ -59,10 +103,22 @@ const server = http.createServer((req, res) => {
       res.end(JSON.stringify({ error: "Missing key parameter" }));
       return;
     }
-    const db = readDb();
-    const value = db[key] !== undefined ? db[key] : null;
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(value));
+    
+    try {
+      let value = null;
+      if (mongoClient && mongoDb) {
+        const doc = await mongoDb.collection('store').findOne({ _id: key });
+        value = doc ? doc.value : null;
+      } else {
+        const db = readDb();
+        value = db[key] !== undefined ? db[key] : null;
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(value));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
     return;
   }
   
@@ -77,12 +133,20 @@ const server = http.createServer((req, res) => {
     
     let body = '';
     req.on('data', chunk => { body += chunk; });
-    req.on('end', () => {
+    req.on('end', async () => {
       try {
         const payload = JSON.parse(body);
-        const db = readDb();
-        db[key] = payload;
-        writeDb(db);
+        if (mongoClient && mongoDb) {
+          await mongoDb.collection('store').updateOne(
+            { _id: key },
+            { $set: { value: payload } },
+            { upsert: true }
+          );
+        } else {
+          const db = readDb();
+          db[key] = payload;
+          writeDb(db);
+        }
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: true }));
       } catch (e) {
@@ -95,15 +159,20 @@ const server = http.createServer((req, res) => {
 
   // API Endpoint: POST /api/db/reset
   if (url.pathname === '/api/db/reset' && req.method === 'POST') {
-    if (fs.existsSync(DB_FILE)) {
-      try {
-        fs.unlinkSync(DB_FILE);
-      } catch (e) {
-        console.error("Error deleting database file:", e);
+    try {
+      if (mongoClient && mongoDb) {
+        await mongoDb.collection('store').deleteMany({});
+      } else {
+        if (fs.existsSync(DB_FILE)) {
+          fs.unlinkSync(DB_FILE);
+        }
       }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true }));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
     }
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ success: true }));
     return;
   }
 

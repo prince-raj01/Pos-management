@@ -1,0 +1,12 @@
+{
+  "name": "manoj-vaishnav-hotel-pos",
+  "version": "1.0.0",
+  "description": "Premium POS and Inventory Management System for Manoj Vaishnav Hotel & Mishthan Bhandar",
+  "main": "server.js",
+  "dependencies": {
+    "mongodb": "^6.3.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
